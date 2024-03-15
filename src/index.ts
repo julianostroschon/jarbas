@@ -1,17 +1,16 @@
-import fastify from "fastify";
+import { notify } from "./services/notify";
+import type { EnvironmentVariables } from './contracts'
+import { validateRequest } from "./util/validation";
+import { constructMessage } from "./util";
 
-import { env } from "./env";
+export default {
+	async fetch(request: Request, env: EnvironmentVariables) {
+    validateRequest(request)
 
-import { constructRoutes } from "./http/handlers";
+    const { message, receivers } = await constructMessage(request)
 
-const app = fastify();
-constructRoutes(app);
-
-const opts = {
-  port: env.API_PORT,
-  host: env.API_HOST
+    await notify(message, env, receivers)
+    
+		return new Response('Hello World!' + JSON.stringify({ receivers }) + (message));
+	},
 };
-
-app.listen(opts).then(() => {
-  console.log(`🚀 Server listening on http://${opts.host}:${opts.port}/`);
-});
