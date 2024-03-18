@@ -65,3 +65,6 @@ dist/
 
 # whatsapp-client data
 .wwebjs*
+
+wrangler.toml
+.wrangler
